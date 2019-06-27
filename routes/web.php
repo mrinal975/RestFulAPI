@@ -1,2 +1,2 @@
 <?php
-Route::get('buyes','User\UserController@index');
+//Route::get('buyes','User\UserController@index');

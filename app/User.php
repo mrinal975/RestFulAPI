@@ -40,4 +40,16 @@ class User extends Authenticatable
     public function generateVerificationCode(){
         return str_random(40);
     }
+    public function setNameAttribute($name){
+        $this->attribute['name']=strtolower($name);
+    }
+    public function getNameAttribute($name){
+        return ucwords($name);
+    }
+    public function setEmailAttribute($email){
+        $this->attribute['email']=strtolower($email);
+    }
+    public function getEmailAttribute($email){
+        return ucwords($email);
+    }
 }

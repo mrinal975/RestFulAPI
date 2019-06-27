@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use App\Transaction;
 class Buyer extends Model
 {
-    public function transection(){
+    protected $table = 'users';
+
+    public function transactions(){
         return $this->hasMany(Transaction::class);
     }
 }
