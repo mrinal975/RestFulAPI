@@ -13,14 +13,13 @@ class SellerController extends ApiController
         return $this->showAll($seller);
         //return response()->json(['data'=>$seller],200);
     }
-    public function show($id)
+    public function show(Seller $seller)
     {
-        $seller = Seller::has('products')->findOrFail($id);
         return $this->showOne($seller);
     }
 
     public function destroy($id)
     {
-        //
+
     }
 }
