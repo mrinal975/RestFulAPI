@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Product;
 use App\Buyer;
+use App\Seller;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
@@ -15,10 +16,13 @@ class Transaction extends Model
         'quantity','buyer_id','product_id'
     ];
 
-    public function products(){
-        return $this->belongsToMany(Product::class);
+    public function product(){
+        return $this->belongsTo(Product::class);
     }
     public function buyer(){
         return $this->belongsToMany(Buyer::class);
+    }
+    public function seller(){
+        return $this->belongsToMany(Seller::class);
     }
 }

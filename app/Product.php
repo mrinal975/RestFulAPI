@@ -21,12 +21,12 @@ class Product extends Model
         return $this->status == Product::AVAILABLE_PRODUCT;
     }
     public function seller(){
-        return $this->belongsToMany(Seller::class);
+        return $this->belongsTo(Seller::class);
     }
     public function transaction(){
         return $this->hasMany(Transaction::class);
     }
-    public function category(){
-        return $this->belongsToMany(Category::class);
+    public function categories(){
+        return $this->belongsToMany('App\Category', 'category_products', 'category_id', 'product_id');
     }
 }

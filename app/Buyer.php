@@ -12,12 +12,12 @@ class Buyer extends Model
     use SoftDeletes;
     protected $table = 'users';
     protected $dates = ['deleted_at'];
-    protected static function boot(){
-        parent::boot();
-        static ::addGlobalScope(new BuyerScope);
-    }
+//    protected static function boot(){
+//        parent::boot();
+//        static ::addGlobalScope(new BuyerScope);
+//    }
 
     public function transactions(){
-        return $this->hasMany(Transaction::class);
+         return $this->hasMany(Transaction::class);
     }
 }
