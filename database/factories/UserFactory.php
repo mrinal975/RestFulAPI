@@ -7,6 +7,7 @@ use App\Product;
 use App\Buyer;
 Use App\Seller;
 use App\Transaction;
+use App\Category_product;
 use Illuminate\Support\Str;
 use Faker\Generator as Faker;
 
@@ -18,7 +19,8 @@ $factory->define(User::class, function (Faker $faker) {
         'email' => $faker->unique()->safeEmail,
         'email_verified_at' => now(),
         'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-        'remember_token' => Str::random(10),
+        'remember_token' => Str::random(15),
+        'verification_token' => Str::random(25),
         'verified' => $verified,
         'admin' => $admin,
     ];
@@ -50,6 +52,15 @@ $factory->define(Transaction::class, function (Faker $faker) {
     return [
         'quantity' =>  $faker->numberBetween(1,3),
         'buyer_id' =>  $buyer,
+        'product_id' =>  $product,
+    ];
+});
+
+$factory->define(Category_product::class, function (Faker $faker) {
+    $category = Category::all()->random()->id;
+    $product = Product::all()->random()->id;
+    return [
+        'category_id' =>  $category,
         'product_id' =>  $product,
     ];
 });

@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -18,18 +19,18 @@ class User extends Authenticatable
 
     protected $table = 'users';
     protected $dates = ['deleted_at'];
+
     protected $fillable = [
-        'name', 'email',
-        'password','verified',
-        'verified_token','admin'
+        'name',
+        'email',
+        'password',
+        'verified',
+        'verified_token',
+        'admin'
     ];
 
     protected $hidden = [
         'password', 'remember_token',
-    ];
-
-    protected $casts = [
-        'email_verified_at' => 'datetime',
     ];
 
     public function isVerified(){
@@ -38,19 +39,7 @@ class User extends Authenticatable
     public function isAdmin(){
         return $this->admin = User::ADMIN_USER;
     }
-    public function generateVerificationCode(){
-        return str_random(40);
+    public static function generateVerificationCode(){
+        return Str::random(3);
     }
-//    public function setNameAttribute($name){
-//        $this->attribute['name']=strtolower($name);
-//    }
-//    public function getNameAttribute($name){
-//        return ucwords($name);
-//    }
-//    public function setEmailAttribute($email){
-//        $this->attribute['email']=strtolower($email);
-//    }
-//    public function getEmailAttribute($email){
-//        return ucwords($email);
-//    }
 }

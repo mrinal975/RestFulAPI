@@ -19,10 +19,13 @@ Route::resource('products','Product\ProductController',['only'=>['index','show']
 Route::resource('seller','Seller\SellerController',['only'=>['index','show']]);
 Route::resource('seller.transaction','Seller\SellerTransactionController',['only'=>['index']]);
 Route::resource('seller.category','Seller\SellerCategoryController',['only'=>['index']]);
-Route::resource('seller.product','Seller\SellerProductController',['only'=>['store','create','update','edit']]);
+Route::resource('seller.product','Seller\SellerProductController',['except'=>['create','edit']]);
 
 Route::resource('transaction','Transaction\TransactionController',['only'=>['index','show']]);
 Route::resource('transaction.categories','Transaction\TransactionCategoryController',['only'=>['index']]);
 Route::resource('transaction.sellers','Transaction\TransactionSellerController',['only'=>['index']]);
 
-Route::resource('user','User\UserController',['except'=>['create','edit']]);
+Route::resource('users','User\UserController',['except'=>['create','edit']]);
+
+Route::name('verify')->get('users/verify/{token}','User\UserController@verify');
+Route::name('resend')->get('users/{resend}/resend','User\UserController@resend');

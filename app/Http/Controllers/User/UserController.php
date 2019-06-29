@@ -2,42 +2,29 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Mail\UserCreated;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use Faker\Generator as Faker;
 use App\Product;
 use App\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-
 class UserController extends ApiController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $user = User::all();
         return $this->showAll($user);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
-        //
+        
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    //there is a problem while creating an user verification_token field always getting empty
     public function store(Request $request)
     {
         $rules = [
@@ -45,59 +32,43 @@ class UserController extends ApiController
             'email'=>'required',
             'password'=>'required|min:6',
         ];
-        $this->validate($request,$rules);
-
         $data = $request->all();
         $data['password'] = bcrypt($request->password);
         $data['verified'] = User::UNVERIFIED_USER;
-        $data['verification_token'] = Str::random(18);
+        $data['verification_token'] ='baba lOknath';
         $data['admin'] = User::REGULAR_USER;
+        $data['created_at'] = User::REGULAR_USER;
 
-        $user = User::created($data);
+
+        $user = User::create($data);
         return $this->showOne($user);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+
+    public function show(User $user)
     {
-        $data = User::findOrFail($id);
         return $this->showOne($user);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+
+    public function edit(User $user)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+
+    public function update(Request $request, User $user)
     {
-        $user =User::findOrFail($id);
         $rules = [
-            'email'=>'required | unique : users, emial, '.$user->id,
+            'email'=>'required',
             'password'=>'required|min:6',
-            'admin'=>'in:'.User::ADMIN_USER.','.User::REGULAR_USER,
+            'admin'=>'required',
         ];
 
         //$this->validate($request,$rules);
-
+        if ($user->isDirty('email')){
+            $user->email=$request->email;
+        }
         if ($request->has('name')){
             $user->name=$request->name;
         }
@@ -119,16 +90,28 @@ class UserController extends ApiController
         return $this->showOne($user);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $user = User::findOrFail($id);
         $user>delete();
         return $this->showOne($user);
+    }
+    public function verify($token)
+    {
+        $user = User::where('verification_token',$token)->first();
+        $user->verified = User::VERIFIED_USER;
+        $user->verification_token = null;
+        $user->save();
+        return $this->showMessage('This account has benn verified successfully');
+    }
+    public function resend(User $user)
+    {
+        if ($user->isVerified()){
+            return $this->errorResponse('This user already verified',409);
+        }
+        retry(5,function () use ($user){
+            Mail::to($user)->send(new UserCreated($user));
+        },100);
+
+        return $this->showMessage('The verification email has been resend');
     }
 }
