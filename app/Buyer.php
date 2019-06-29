@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Transformers\BuyerTransformer;
 use Illuminate\Database\Eloquent\Model;
 use App\Transaction;
 use App\Scopes\BuyerScope;
@@ -12,6 +13,7 @@ class Buyer extends Model
     use SoftDeletes;
     protected $table = 'users';
     protected $dates = ['deleted_at'];
+    public $transformer = BuyerTransformer::class;
 //    protected static function boot(){
 //        parent::boot();
 //        static ::addGlobalScope(new BuyerScope);
