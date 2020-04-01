@@ -10,9 +10,11 @@ trait ApiResponser
     private function successResponse($data, $code){
         return response()->json($data,$code);
     }
+    
     protected function errorResponse($message, $code){
         return response()->json(['error'=>$message, 'code'=>$code]);
     }
+    
     protected function showAll(Collection $collection, $code = 200){
         if ($collection->isEmpty()){
             return $this->successResponse($collection,$code);
@@ -20,25 +22,29 @@ trait ApiResponser
 
         $transformer = $collection->first()->transformer;
 
-        $collection = $this->SortDara($collection,$transformer);
+        $collection = $this->SortData($collection,$transformer);
         $collection = $this->filterData($collection, $transformer);
         $collection = $this->paginate($collection);
         $collection = $this->TransformData($collection, $transformer);
 
         return $this->successResponse($collection,$code);
     }
+    
     protected function showOne(Model $instance, $code=200){
         $transformer = $instance->transformer;
 
         $transformer =$this->TransformData($instance,$transformer);
         return $this->successResponse($transformer,$code);
     }
+    
     protected function showMessage($message, $code=200){
         return response()->json(['data'=>$message], $code);
     }
+    
     protected function TransformData($data, $transformer){
         return fractal($data, new $transformer())->toArray();
     }
+    
     protected function filterData(Collection $collection ,$transformer){
         foreach (request()->query() as $query => $value){
             $attribute = $transformer ::originalAttribute($query);
@@ -49,13 +55,15 @@ trait ApiResponser
         }
         return $collection;
     }
-    protected function SortDara(Collection $collection,$transformer){
+    
+    protected function SortData(Collection $collection,$transformer){
         if (request()->has('sort_by')){
             $attribute = $transformer::originalAttribute(request()->sort_by);
             $collection = $collection->sortBy->{$attribute};
         }
         return $collection;
     }
+
     protected function paginate(Collection $collection){
 
         $page = LengthAwarePaginator::resolveCurrentPage();
